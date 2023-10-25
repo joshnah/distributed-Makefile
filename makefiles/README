@@ -1,0 +1,19 @@
+Divers
+------
+
+# Blender
+
+La version de blender disponible en D200 est la 2.49
+
+utilisez, si besoin est, les fichiers de tests correspondants
+
+# Premier et autres exécutables
+
+Les exécutables doivent être dans le PATH si vous
+voulez utilisez les makefile directement.
+
+## Exemple
+
+'''sh
+	PATH=${PATH}:./ make
+'''

@@ -4,6 +4,7 @@ import java.nio.file.attribute.FileTime
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.ListBuffer
 
+
 /** A system file
  *
  *  @constructor create a new file with a name and the last modified date.
@@ -52,7 +53,7 @@ object Rule {
     def getRuleInstance(target: String): List[Rule] = {
         return this.ruleCache.getOrElse(target, ListBuffer()).toList
     }
-    def getFirstRule: Option[Rule] = {
+    def getFirstRule(): Option[Rule] = {
         return this.firstRule
     }
     def setFirstRule(rule: Rule) = {

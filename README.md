@@ -17,3 +17,11 @@ Reserve nodes on grid5000, deploy spark on nodes and create a tunnel to access t
 ./deploy.sh
 ssh tiphan@access.grid5000.fr -N -f  -L 8080:$ip_master_node:8080
 ```
+
+## Scheduling a program
+
+```
+sbt package
+
+spark-submit --class "DAGExample"  --master 'local[2]' target/scala-2.12/hello-world_2.12-1.0.jar
+```

@@ -36,15 +36,22 @@ object Main {
             sys.exit(1)
         }
 
-        val makefile = Makefile.parse(makefilePath)
+        val dir = makefilePath.getParent()
+        val makefile = Makefile.parse(makefilePath).drop_up_to_date(dir)
 
         println(s"initial targets: ${targets.mkString(", ")}")
         println(s"targets (${makefile.targets.size}):")
-        for (case (name, target) <- makefile.targets) {
-            println(s"$name: ${target.dependencies.mkString(" ")}")
+        for (target <- makefile.targets) {
+            println(s"${target.name}: ${target.dependencies.mkString(" ")}")
             for (command <- target.commands) {
                 println(s"    $command")
             }
+        }
+
+        val scheduling = makefile.calc_scheduling(dir)
+        println(s"scheduling (${scheduling.length}):")
+        for (par <- scheduling) {
+            println(s"${par.map(_.name).mkString(", ")}")
         }
 
     }

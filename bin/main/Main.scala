@@ -10,7 +10,7 @@ object Main {
 
         var parseArgs = args;
         var makefilePath = Paths.get("Makefile")
-        var targets = ArrayBuffer[String]()
+        var initialTargets = ArrayBuffer[String]()
 
         while (!parseArgs.isEmpty) {
 
@@ -25,7 +25,7 @@ object Main {
                 Console.err.println(s"error: unknown argument: ${parseArgs(0)}")
                 sys.exit(1)
             } else {
-                targets += parseArgs(0)
+                initialTargets += parseArgs(0)
                 parseArgs = parseArgs.drop(1)
             }
 
@@ -36,22 +36,26 @@ object Main {
             sys.exit(1)
         }
 
-        val dir = makefilePath.getParent()
-        val makefile = Makefile.parse(makefilePath).drop_up_to_date(dir)
-
-        println(s"initial targets: ${targets.mkString(", ")}")
-        println(s"targets (${makefile.targets.size}):")
-        for (target <- makefile.targets) {
-            println(s"${target.name}: ${target.dependencies.mkString(" ")}")
-            for (command <- target.commands) {
-                println(s"    $command")
-            }
+        if (initialTargets.isEmpty) {
+            initialTargets = ArrayBuffer[String]("all")
         }
 
-        val scheduling = makefile.calc_scheduling(dir)
+        val makefile = Makefile.parse(makefilePath)
+
+        println(s"initial targets: ${initialTargets.mkString(", ")}")
+
+        // println(s"targets (${makefile.targets.size}):")
+        // for (target <- makefile.targets) {
+        //     println(s"${target.name}: ${target.dependencies.mkString(" ")}")
+        //     for (command <- target.commands) {
+        //         println(s"    $command")
+        //     }
+        // }
+
+        val scheduling = makefile.calc_scheduling(initialTargets.toArray)
         println(s"scheduling (${scheduling.length}):")
-        for (par <- scheduling) {
-            println(s"${par.map(_.name).mkString(", ")}")
+        for (case (targets, index) <- scheduling.zipWithIndex) {
+            println(s"#$index: ${targets.map(_.name).mkString(", ")}")
         }
 
     }

@@ -1,4 +1,6 @@
 import scala.collection.mutable.ArrayBuffer
+import org.apache.spark.{SparkConf, SparkContext}
+import sys.process._
 
 import java.nio.file.Paths
 import java.nio.file.Files
@@ -7,6 +9,8 @@ import java.nio.file.Files
 object Main {
 
     def main(args: Array[String]): Unit = {
+        val conf = new SparkConf().setAppName("Theo's Spark Makefile")
+        val sc = new SparkContext(conf)
 
         var parseArgs = args;
         var makefilePath = Paths.get("Makefile")
@@ -57,6 +61,23 @@ object Main {
         for (case (targets, index) <- scheduling.zipWithIndex) {
             println(s"#$index: ${targets.map(_.name).mkString(", ")}")
         }
+
+        // iterate over scheduling and execute each target
+        for (level <- scheduling) {
+            val rdd = sc.parallelize(level.map(_.commands)) // transmet all the commands of the level
+            rdd.foreach((commands)=> {
+                commands.foreach((command)=> {
+                    val exitCode = command.!
+                    if (exitCode != 0) {
+                        throw new RuntimeException(s"command '$command' failed with the exited code: $exitCode")
+                        sys.exit(1)
+                    }
+                })
+            })
+            
+        }
+        // Loop forever to keep the Spark context alive so the web UI is alive.
+        while (true){}
 
     }
 

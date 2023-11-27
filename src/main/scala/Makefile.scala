@@ -11,6 +11,11 @@ class Target(val name: String, val dependencies: Array[String], val commands: Ar
 class Makefile(val path: Path, val targets: Array[Target]) {
 
     /**
+      * Get the directory this makefile is stored in, the directory returned is absolute.
+      */
+    def directory = this.path.toAbsolutePath.getParent()
+
+    /**
       * Calculate the scheduling order for this makefile. This method doesn't schedule
       * files that are up-to-date with their dependencies and also with the makefile.
       * For each target, if a dependency is not defined as a target but its file is not
@@ -91,7 +96,7 @@ class Makefile(val path: Path, val targets: Array[Target]) {
         tmpTargets.foreach { case (name, to) => seqTargets(to.order) += ((name, to.target)) }
 
         val makefileModTime = Files.getLastModifiedTime(this.path).toMillis();
-        val dir = this.path.getParent()
+        val dir = this.directory
 
         seqTargets.map { targets =>
             // Start by filtering and checking targets that are out-of-date.

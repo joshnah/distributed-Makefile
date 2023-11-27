@@ -23,5 +23,5 @@ ssh tiphan@access.grid5000.fr -N -f  -L 8080:$ip_master_node:8080
 ```
 sbt package
 
-spark-submit --class "DAGExample"  --master 'local[2]' target/scala-2.12/hello-world_2.12-1.0.jar
+spark-submit --class "Main"  --master 'local[2]' target/scala-2.12/distributed-makefile_2.12-0.1.0-SNAPSHOT.jar -f <path_to_file> 
 ```

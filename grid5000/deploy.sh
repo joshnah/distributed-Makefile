@@ -11,10 +11,10 @@ TAKTUK_MASTER="./spark-3.5.0-bin-hadoop3/sbin/start-master.sh ; \
     ./spark-3.5.0-bin-hadoop3/sbin/start-worker.sh spark://\$(hostname -i):7077 \]"
 
 # deploy
-kadeploy3 -f $OAR_NODE_FILE -e debian10-nfs	 -k
+# kadeploy3 -f $OAR_NODE_FILE -e debian10-nfs	 -k
 
 # install java on all nodes
-taktuk -l root -f <( uniq $OAR_NODE_FILE ) broadcast exec [ "apt update && apt install default-jre -y" ] 
+# taktuk -l root -f <( uniq $OAR_NODE_FILE ) broadcast exec [ "apt update && apt install default-jre -y" ] 
 
 # launch master node
 taktuk -f <( uniq master_node ) broadcast exec [ $TAKTUK_MASTER ]

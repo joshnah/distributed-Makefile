@@ -15,9 +15,50 @@ Reserve nodes on grid5000, deploy spark on nodes and create a tunnel to access t
 ```
 ./reserve.sh 2 01:00:00  # 2 nodes for 1 hours
 ./deploy.sh
-ssh tiphan@access.grid5000.fr -N -f  -L 8080:$ip_master_node:8080
 ```
 
+
+## Submit a job from a client outside grid5000
+
+Add hosts into your /etc/hosts file
+```
+sudo echo "127.0.0.1 <master_hostname>" >> /etc/hosts
+```
+SSH tunnel to access the spark web interface
+```
+./ssh-tunnel.sh <spark-master-ip> <spark-worker-ip>
+```
+Submit a job
+```
+JAVA_HOME=/usr;spark-submit \
+--class "Main" \
+--deploy-mode cluster \
+--master <master> \
+--conf "spark.executor.extraJavaOptions=--add-exports java.base/sun.nio.ch=ALL-UNNAMED" \
+--conf "spark.driver.extraJavaOptions=--add-exports java.base/sun.nio.ch=ALL-UNNAMED" \
+< JAR file > \
+-m <master> \
+-f <makefile>
+
+Examples: 
+JAVA_HOME=/usr;spark-submit \
+--class "Main" \
+--deploy-mode cluster \
+--master spark://dahu-2.grenoble.grid5000.fr:7077 \
+--conf "spark.executor.extraJavaOptions=--add-exports java.base/sun.nio.ch=ALL-UNNAMED" \
+--conf "spark.driver.extraJavaOptions=--add-exports java.base/sun.nio.ch=ALL-UNNAMED" \
+--conf "spark.executorEnv.JAVA_HOME=/usr" \
+--conf "spark.driverEnv.JAVA_HOME=/usr" \
+/home/tiphan/distributed-makefile_2.12-0.1.0-SNAPSHOT.jar \
+-m "spark://dahu-2.grenoble.grid5000.fr:7077" \
+-f /home/tiphan/Makefile
+``````
+
+
+Clean up the hosts file and the ssh tunnel
+```
+sudo ./clean-up.sh
+```
 ## Scheduling a program
 
 ```

@@ -1,10 +1,25 @@
-# Distributed makefile
+edt# Distributed makefile
 
 ## Dependencies
 
 - [sbt](https://www.scala-sbt.org/index.html) for compiling, running, packaging our Scala project
 Install spark on your front-end:
 
+## Connect on grid5000 
+```bash
+ssh login@access.grid5000.fr
+cd grenoble
+```
+## (On local terminal) Copy Files on grid5000
+```bash
+scp ./grid5000/deploy.sh login@access.grid5000.fr:grenoble
+scp ./grid5000/reserve.sh login@access.grid5000.fr:grenoble
+```
+## Setup 
+```bash
+sbt
+package
+```
 
 ## Deploy on grid5000
 ```bash

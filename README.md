@@ -34,11 +34,7 @@ Connect to your one of the grid5000 frontend and clone the repository
 wget https://dlcdn.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz && tar zxvf spark-3.5.0-bin-hadoop3.tgz
 ```
 
-Set up the environment variables:
-```bash
-export SPARK_HOME=/home/<username>/spark-3.5.0-bin-hadoop3
-export PATH=$PATH:$SPARK_HOME/bin
-```
+
 
 Reserve nodes on grid5000, deploy spark on nodes and create a tunnel to access the spark web interface:
 
@@ -59,6 +55,11 @@ usage: make [-h] [-f <makefile path>] [-m <spark master url>] [target...]
 
 ## Submit a job from a client inside grid5000
 
+Set up the environment variables:
+```bash
+export SPARK_HOME=/home/<username>/spark-3.5.0-bin-hadoop3
+export PATH=$PATH:$SPARK_HOME/bin
+```
 
 Submit a job:
 ```bashtarget/scala-2.12/distributed-makefile_2.12-0.1.0-SNAPSHOT.jar

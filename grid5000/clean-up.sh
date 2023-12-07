@@ -14,6 +14,3 @@ kill_process_by_port 7077
 kill_process_by_port 8080
 kill_process_by_port 8081
 kill_process_by_port 4040
-
-sed -i '/grid5000/d' /etc/hosts
-

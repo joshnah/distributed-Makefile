@@ -77,7 +77,7 @@ object Main {
         // }
 
         val scheduling = makefile.calc_scheduling(initialTargets.toArray)
-        println("### Scheduling ${scheduling.length} in total ###")
+        println(s"### Scheduling ${scheduling.length} in total ###")
         for (case (targets, index) <- scheduling.zipWithIndex) {
             println(s"Step $index: ${targets.map(_.name).mkString(", ")}\n")
         }
@@ -125,11 +125,11 @@ object Main {
             }
             case None => {
 
-                // for (level <- scheduling) {
-                //     for (target <- level) {
-                //         target.commands.foreach(run)
-                //     }
-                // }
+                for (level <- scheduling) {
+                    for (target <- level) {
+                        target.commands.foreach(run)
+                    }
+                }
 
             }
         }

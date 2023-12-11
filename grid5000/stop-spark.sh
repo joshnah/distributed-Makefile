@@ -1,0 +1,1 @@
+ssh $(cat ~/master_node) "/opt/spark-3.5.0-bin-hadoop3/sbin/stop-all.sh"

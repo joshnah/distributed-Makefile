@@ -136,7 +136,8 @@ object Main {
                                 // sys.exit(1)
                             }
 
-                            logs.add(new Log(id, false, stream.toString))
+                            writer.close()
+                            logs.add(new Log(id, false, stream.toString()))
                             
                         })
                     })

@@ -1,11 +1,14 @@
 import org.apache.spark.{SparkConf, SparkContext, TaskContext}
-import scala.collection.mutable.ArrayBuffer
-import sys.process.Process
 import org.apache.log4j.{Level, Logger}
 
+import scala.collection.mutable.ArrayBuffer
+import sys.process.Process
 
 import java.nio.file.Paths
 import java.nio.file.Files
+import java.io.ByteArrayOutputStream
+import java.io.PrintWriter
+import scala.sys.process.ProcessLogger
 
 
 object Main {
@@ -103,9 +106,12 @@ object Main {
                     .set("spark.log.level", "ERROR")
 
                 val driverCtx = new SparkContext(conf)
-                val startTime = System.currentTimeMillis()
+                
+                // Logs coming from all drivers.
+                class Log(val id: Long, val command: Boolean, val content: String)
+                val logs = driverCtx.collectionAccumulator[Log]("Logs")
 
-                val acc = driverCtx.collectionAccumulator[String]("Logs")
+                val startTime = System.currentTimeMillis()
 
                 // iterate over scheduling and execute each target
                 for (level <- scheduling) {
@@ -117,23 +123,29 @@ object Main {
                         val id = taskCtx.taskAttemptId()
                         
                         commands.foreach(command => {
-                            
-                            acc.add(s"$id: $command")
 
-                            val exitCode = Process(Seq("bash", "-c", command), runDir).!
+                            val stream = new ByteArrayOutputStream
+                            val writer = new PrintWriter(stream)
+                            val logger = ProcessLogger(writer.println, writer.println)
+
+                            logs.add(new Log(id, true, command))
+
+                            val exitCode = Process(Seq("bash", "-c", command), runDir).!(logger)
                             if (exitCode != 0) {
-                                acc.add(s"$id: error: command failed with exit code $exitCode: $command")
-                                sys.exit(1)
+                                // logs.add(s"$id: error: command failed with exit code $exitCode: $command")
+                                // sys.exit(1)
                             }
+
+                            logs.add(new Log(id, false, stream.toString))
                             
                         })
                     })
 
                     var i = 0;
                     while (!future.isCompleted) {
-                        while (i < acc.value.size) {
-                            val log = acc.value.get(i);
-                            println(log)
+                        while (i < logs.value.size) {
+                            val log = logs.value.get(i);
+                            println(s"${log.id}: ${log.content}")
                             i += 1;
                         }
                     }
@@ -165,3 +177,4 @@ object Main {
     }
 
 }
+

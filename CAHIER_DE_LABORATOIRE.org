@@ -19,6 +19,20 @@
 * Déployement dans Grid 5000
 
 * Expérimentations
+Descriptif : 
+ShaGit : 
+Date :
+Machines utilisées : 
+Script de génération de résultats : 
+Fichier de stockage de résultats : 
+
+Descriptif : 
+ShaGit : 
+Date : 
+Machines utilisées :
+Script de génération de résultats : 
+Fichier de stockage de résultats : 
+
 
 * Fabrication des courbes de performances
 

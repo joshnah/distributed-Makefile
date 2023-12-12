@@ -15,7 +15,10 @@ uniq $OAR_NODE_FILE | tail -n +2 > ~/worker_nodes
 
 # Configure spark config
 taktuk -l root -f <( uniq $OAR_NODE_FILE ) broadcast exec [ ""echo $(cat ~/worker_nodes)" > /opt/spark-3.5.0-bin-hadoop3/conf/workers" ]
-taktuk -l root -f <( uniq $OAR_NODE_FILE ) broadcast exec [ "echo SPARK_WORKER_INSTANCES=$SPARK_WORKER_INSTANCES > /opt/spark-3.5.0-bin-hadoop3/conf/spark-env.sh" ]
+if [ -z "$1" ]
+then
+    taktuk -l root -f <( uniq $OAR_NODE_FILE ) broadcast exec [ "echo SPARK_WORKER_INSTANCES=$SPARK_WORKER_INSTANCES > /opt/spark-3.5.0-bin-hadoop3/conf/spark-env.sh" ]
+fi
 
 # start spark
 ssh $(cat ~/master_node) "/opt/spark-3.5.0-bin-hadoop3/sbin/start-all.sh"

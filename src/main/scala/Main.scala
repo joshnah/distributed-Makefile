@@ -146,7 +146,7 @@ object Main {
                     while (!future.isCompleted) {
                         while (i < logs.value.size) {
                             val log = logs.value.get(i);
-                            println(s"${log.id}: ${log.content}")
+                            println(s"${log.id}: ${log.content.strip()}")
                             i += 1;
                         }
                     }

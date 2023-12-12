@@ -31,16 +31,17 @@ Reserve nodes:
 ```bash 
 oarsub -t deploy -I -l nodes=2,walltime=2
 ```
+
+Deploy environment on each node:
+
+```bash 
+kadeploy3 -u tiphan  debian10-nfs-spark
+```
+
 Deploy spark on the nodes:
 ```
 grid5000/deploy-spark.sh
 ```
-
-Deploy spark and submit a job:
-```
-grid5000/deploy-run.sh <makefile>
-```
-
 
 Submit a job:
 ```bash

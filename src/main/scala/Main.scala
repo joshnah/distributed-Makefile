@@ -108,7 +108,7 @@ object Main {
                 val driverCtx = new SparkContext(conf)
                 
                 // Logs coming from all drivers.
-                class Log(val id: Long, val command: Boolean, val content: String)
+                class Log(val id: Long, val command: Boolean, val content: String) extends Serializable
                 val logs = driverCtx.collectionAccumulator[Log]("Logs")
 
                 val startTime = System.currentTimeMillis()

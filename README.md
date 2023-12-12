@@ -4,7 +4,7 @@ edt# Distributed makefile
 ## Connect on grid5000 
 ```bash
 ssh login@access.grid5000.fr
-cd grenoble
+ssh grenoble
 ```
 Or you can add the following lines in your ~/.ssh/config file:
 ```bash

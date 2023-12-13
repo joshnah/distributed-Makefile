@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script to reserve nodes, deploy the environment and compile the makefile
-if [ $# -ne 2 ]; then
-    echo "Usage: ./deploy-run.sh <nb_nodes> <absolute_path_to_make_file>"
+if [ $# -eq 0 ]; then
+    echo "Usage: ./deploy-run.sh <nb_nodes> <list_of_makefiles>"
     exit 1
 fi
 
@@ -20,5 +20,7 @@ $folder/reserve-deploy.sh $1
 # Deploy Spark
 $folder/deploy-spark.sh 1
 
-# Submit the job
-$folder/submit-job.sh $2
+if [ -z "$2" ]
+then
+    $folder/submit-makefiles.sh $2
+fi

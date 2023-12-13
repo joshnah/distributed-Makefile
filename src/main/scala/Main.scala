@@ -7,7 +7,7 @@ import sys.process.Process
 import java.nio.file.Paths
 import java.nio.file.Files
 import java.io.ByteArrayOutputStream
-import java.io.PrintWriter
+import java.io.{PrintWriter, File}
 import scala.sys.process.ProcessLogger
 
 
@@ -160,9 +160,19 @@ object Main {
                 // Calculate and print the execution time
                 val executionTime = endTime - startTime
                 println(s"Execution time: $executionTime milliseconds")
+
+                // write the execution time in a file
+                val filePath = "executionTime.txt"
+                val executionTimeFile = new File(filePath)
+
+                val writer = new PrintWriter(executionTimeFile)
+                writer.write(s"$executionTime")
+                writer.close()
+
                 driverCtx.stop()
 
                 println("### End Run ###\n")
+                
 
             }
             case None => {

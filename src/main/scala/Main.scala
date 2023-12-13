@@ -150,7 +150,7 @@ object Main {
                             i += 1;
                         }
                     }
-
+                    logs.reset()
                 }
 
                 // Record the end time

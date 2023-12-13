@@ -104,6 +104,7 @@ object Main {
                     .setAppName("Spark Makefile")
                     .setMaster(masterUrl)
                     .set("spark.log.level", "ERROR")
+                    .set("spark.task.maxFailures", "1")
 
                 val driverCtx = new SparkContext(conf)
                 
@@ -132,12 +133,12 @@ object Main {
 
                             val exitCode = Process(Seq("bash", "-c", command), runDir).!(logger)
                             if (exitCode != 0) {
-                                // logs.add(s"$id: error: command failed with exit code $exitCode: $command")
-                                // sys.exit(1)
+                                logs.add(new Log(-1, false, "ERROR: command failed with exit code " + exitCode + "\n"+  stream.toString()))
                             }
+                            
 
                             writer.close()
-                            logs.add(new Log(id, false, stream.toString()))
+                            // logs.add(new Log(id, false, stream.toString()))
                             
                         })
                     })
@@ -146,7 +147,7 @@ object Main {
                     while (!future.isCompleted) {
                         while (i < logs.value.size) {
                             val log = logs.value.get(i);
-                            println(s"${log.id}: ${log.content.strip()}")
+                            println(s"${log.content.strip()}")
                             i += 1;
                         }
                     }

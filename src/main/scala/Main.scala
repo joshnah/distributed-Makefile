@@ -1,11 +1,14 @@
-import org.apache.spark.{SparkConf, SparkContext}
-import scala.collection.mutable.ArrayBuffer
-import sys.process.Process
+import org.apache.spark.{SparkConf, SparkContext, TaskContext}
 import org.apache.log4j.{Level, Logger}
 
+import scala.collection.mutable.ArrayBuffer
+import sys.process.Process
 
 import java.nio.file.Paths
 import java.nio.file.Files
+import java.io.ByteArrayOutputStream
+import java.io.PrintWriter
+import scala.sys.process.ProcessLogger
 
 
 object Main {
@@ -84,9 +87,9 @@ object Main {
         println("### End Scheduling ###\n")
 
         println("### Run ###")
+
         val runDir = makefile.directory.toFile()
         def run(command: String) = {
-            println(s"executing: $command")
             val exitCode = Process(Seq("bash", "-c", command), runDir).!
             if (exitCode != 0) {
                 Console.err.println(s"error: command failed with exit code $exitCode: $command")
@@ -96,29 +99,67 @@ object Main {
 
         sparkMasterUrl match {
             case Some(masterUrl) => {
+
                 val conf = new SparkConf()
                     .setAppName("Spark Makefile")
                     .setMaster(masterUrl)
                     .set("spark.log.level", "ERROR")
 
-                val sc = new SparkContext(conf)
+                val driverCtx = new SparkContext(conf)
+                
+                // Logs coming from all drivers.
+                class Log(val id: Long, val command: Boolean, val content: String) extends Serializable
+                val logs = driverCtx.collectionAccumulator[Log]("Logs")
+
                 val startTime = System.currentTimeMillis()
 
                 // iterate over scheduling and execute each target
                 for (level <- scheduling) {
-                    val rdd = sc.parallelize(level.map(_.commands)) // transmet all the commands of the level
-                    rdd.foreach(commands => {
-                        commands.foreach(run)
-                    })
                     
+                    val rdd = driverCtx.parallelize(level.map(_.commands)) // transmet all the commands of the level
+                    val future = rdd.foreachAsync(commands => {
+
+                        val taskCtx = TaskContext.get()
+                        val id = taskCtx.taskAttemptId()
+                        
+                        commands.foreach(command => {
+
+                            val stream = new ByteArrayOutputStream
+                            val writer = new PrintWriter(stream)
+                            val logger = ProcessLogger(writer.println, writer.println)
+
+                            logs.add(new Log(id, true, command))
+
+                            val exitCode = Process(Seq("bash", "-c", command), runDir).!(logger)
+                            if (exitCode != 0) {
+                                // logs.add(s"$id: error: command failed with exit code $exitCode: $command")
+                                // sys.exit(1)
+                            }
+
+                            writer.close()
+                            logs.add(new Log(id, false, stream.toString()))
+                            
+                        })
+                    })
+
+                    var i = 0;
+                    while (!future.isCompleted) {
+                        while (i < logs.value.size) {
+                            val log = logs.value.get(i);
+                            println(s"${log.id}: ${log.content.strip()}")
+                            i += 1;
+                        }
+                    }
+
                 }
+
                 // Record the end time
                 val endTime = System.currentTimeMillis()
 
                 // Calculate and print the execution time
                 val executionTime = endTime - startTime
                 println(s"Execution time: $executionTime milliseconds")
-                sc.stop()
+                driverCtx.stop()
 
                 println("### End Run ###\n")
 
@@ -137,3 +178,4 @@ object Main {
     }
 
 }
+

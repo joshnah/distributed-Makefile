@@ -7,17 +7,16 @@ else
     SPARK_WORKER_INSTANCES=1
 fi
 
-# get the master node
-uniq $OAR_NODE_FILE | head -n 1 > ~/master_node
-
-# get the workers node
-uniq $OAR_NODE_FILE | tail -n +2 > ~/worker_nodes
+# check if there is OAR_NODE_FILE
+if [ ! -f ~/oar_node_file ]; then
+    uniq $OAR_NODE_FILE > ~/oar_node_file
+fi
 
 # Configure spark config
-taktuk -l root -f <( uniq $OAR_NODE_FILE ) broadcast exec [ ""echo $(cat ~/worker_nodes)" > /opt/spark-3.5.0-bin-hadoop3/conf/workers" ]
+taktuk -l root -f ~/oar_node_file broadcast exec [ ""echo $(cat ~/worker_nodes)" > /opt/spark-3.5.0-bin-hadoop3/conf/workers" ]
 if [ -z "$1" ]
 then
-    taktuk -l root -f <( uniq $OAR_NODE_FILE ) broadcast exec [ "echo SPARK_WORKER_INSTANCES=$SPARK_WORKER_INSTANCES > /opt/spark-3.5.0-bin-hadoop3/conf/spark-env.sh" ]
+    taktuk -l root -f ~/oar_node_file broadcast exec [ "echo SPARK_WORKER_INSTANCES=$SPARK_WORKER_INSTANCES > /opt/spark-3.5.0-bin-hadoop3/conf/spark-env.sh" ]
 fi
 
 # start spark

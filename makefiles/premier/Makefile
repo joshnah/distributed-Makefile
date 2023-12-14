@@ -60,6 +60,5 @@ list19.txt:
 
 list20.txt:
 	./premier `echo 19*200000000/20 |bc` `echo 20*200000000/20-1 |bc` > list20.txt
-
-
-
+clean:
+	rm -f list.txt list1.txt list2.txt list3.txt list4.txt list5.txt list6.txt list7.txt list8.txt list9.txt list10.txt list11.txt list12.txt list13.txt list14.txt list15.txt list16.txt list17.txt list18.txt list19.txt list20.txt

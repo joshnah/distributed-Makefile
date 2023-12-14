@@ -19,7 +19,8 @@ object Main {
         var makefilePath = Paths.get("Makefile")
         var sparkMasterUrl: Option[String] = None
         var initialTargets = ArrayBuffer[String]()
-
+        var startTime: Long = 0
+        var endTime: Long = 0
         while (!parseArgs.isEmpty) {
 
             if (parseArgs(0) == "-f") {
@@ -78,13 +79,16 @@ object Main {
         //         println(s"    $command")
         //     }
         // }
-
+        startTime =  System.currentTimeMillis()
         val scheduling = makefile.calc_scheduling(initialTargets.toArray)
-        println(s"### Scheduling ${scheduling.length} in total ###")
-        for (case (targets, index) <- scheduling.zipWithIndex) {
-            println(s"Step $index: ${targets.map(_.name).mkString(", ")}\n")
-        }
-        println("### End Scheduling ###\n")
+        endTime = System.currentTimeMillis()
+        val schedulingTime = (endTime - startTime) 
+        println(s"### Scheduling time: $schedulingTime miliseconds ###")
+        println(s"### Scheduling ${scheduling.length} in total ###\n")
+        // for (case (targets, index) <- scheduling.zipWithIndex) {
+        //     println(s"Step $index: ${targets.map(_.name).mkString(", ")}\n")
+        // }
+        // println("### End Scheduling ###\n")
 
         println("### Run ###")
 
@@ -112,10 +116,11 @@ object Main {
                 class Log(val id: Long, val command: Boolean, val content: String) extends Serializable
                 val logs = driverCtx.collectionAccumulator[Log]("Logs")
 
-                val startTime = System.currentTimeMillis()
+                startTime = System.currentTimeMillis()
 
                 // iterate over scheduling and execute each target
-                for (level <- scheduling) {
+                for (case (level, index) <- scheduling.zipWithIndex) {
+
                     
                     val rdd = driverCtx.parallelize(level.map(_.commands)) // transmet all the commands of the level
                     val future = rdd.foreachAsync(commands => {
@@ -129,11 +134,13 @@ object Main {
                             val writer = new PrintWriter(stream)
                             val logger = ProcessLogger(writer.println, writer.println)
 
-                            logs.add(new Log(id, true, command))
 
                             val exitCode = Process(Seq("bash", "-c", command), runDir).!(logger)
                             if (exitCode != 0) {
+                                writer.close()
+                                logs.add(new Log(id, true, command))
                                 logs.add(new Log(-1, false, "ERROR: command failed with exit code " + exitCode + "\n"+  stream.toString()))
+                                // sys.exit(1)
                             }
                             
 
@@ -147,26 +154,34 @@ object Main {
                     while (!future.isCompleted) {
                         while (i < logs.value.size) {
                             val log = logs.value.get(i);
+                            // If fail, stop the execution
+                            if (log.id == -1) {
+                                println(s"${log.content.strip()}")
+                                driverCtx.cancelAllJobs()
+                                driverCtx.stop()
+                                sys.exit(1)
+                            } 
                             println(s"${log.content.strip()}")
                             i += 1;
                         }
                     }
                     logs.reset()
+                    println(s"### Level $index finished ###\n")
                 }
 
                 // Record the end time
-                val endTime = System.currentTimeMillis()
+                endTime = System.currentTimeMillis()
 
                 // Calculate and print the execution time
                 val executionTime = endTime - startTime
-                println(s"Execution time: $executionTime milliseconds")
+                println(s"### Execution time: $executionTime milliseconds ###")
 
                 // write the execution time in a file
                 val filePath = "executionTime.txt"
                 val executionTimeFile = new File(filePath)
 
                 val writer = new PrintWriter(executionTimeFile)
-                writer.write(s"$executionTime")
+                writer.write(s"$schedulingTime, $executionTime")
                 writer.close()
 
                 driverCtx.stop()

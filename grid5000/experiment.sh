@@ -17,10 +17,13 @@ folder=$(dirname "${BASH_SOURCE[0]}")
 # Reserve nodes and deploy image with kadeploy3
 $folder/reserve-deploy.sh $1
 
-# Deploy Spark
-$folder/deploy-spark.sh 1
+# Copy the jar file to the nodes
+$folder/copy_file_to_nodes.sh $folder/../distributed-makefile_2.12-0.1.0-SNAPSHOT.jar /opt/spark-3.5.0-bin-hadoop3/
 
-if [ -z "$2" ]
+# Deploy Spark
+$folder/deploy-spark.sh
+
+if [ ! -z "$2" ];
 then
     $folder/submit-makefiles.sh $2
 fi

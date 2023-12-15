@@ -181,7 +181,8 @@ object Main {
                 val executionTimeFile = new File(filePath)
 
                 val writer = new PrintWriter(executionTimeFile)
-                writer.write(s"$schedulingTime, $executionTime")
+                writer.write(s"$schedulingTime\n")
+                writer.write(s"$executionTime\n")
                 writer.close()
 
                 driverCtx.stop()

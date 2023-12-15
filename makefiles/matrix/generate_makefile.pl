@@ -78,4 +78,4 @@ foreach $b (@b) {
 }
 
 print "clean:\n";
-print "\trm -f @a @b @p @c c check\n";
+print "\trm -f a-* b-* c-* p-* c check\n";

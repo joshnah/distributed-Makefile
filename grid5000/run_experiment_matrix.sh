@@ -1,32 +1,16 @@
-# #!/bin/bash
-# DIMENSION=$1
-# NB_DECOUPE=$2
-
-# > execution_time_result.txt
-# folder=$(dirname "${BASH_SOURCE[0]}")
-# # enter the matrix folder 
-# MATRIX_FOLDER=$folder/../makefiles/matrix
-# $MATRIX_FOLDER/generate_makefile.pl $DIMENSION $NB_DECOUPE > $MATRIX_FOLDER/Makefile
-# $MATRIX_FOLDER/random_matrix.pl $DIMENSION $DIMENSION > $MATRIX_FOLDER/a
-# $MATRIX_FOLDER/random_matrix.pl $DIMENSION $DIMENSION > $MATRIX_FOLDER/b
-
-# # the time execution is written in executionTime.txt
-# $folder/submit-job.sh $MATRIX_FOLDER/Makefile
-
-
-
-
 # Output file
 result_file="execution_time_result.txt"
 execution_file="executionTime.txt"
-folder=$(dirname "${BASH_SOURCE[0]}")   
+folder=$(pwd)/$(dirname "${BASH_SOURCE[0]}")   
+echo "folder: $folder"
 MATRIX_FOLDER=$folder/../makefiles/matrix
+NB_ATTEMPTS=3
 
 > $result_file
 echo "Dimension; Decoupe; Scheduling Time, Execution Time" >> $result_file
 # Loop over dimensions
-for dimension in {1..5..1}; do
-  for decoupe in {10..10}; do
+for dimension in {1..1..1}; do
+  for decoupe in {5..5..10}; do
     echo "Running for Dimension: $dimension, Decoupe: $decoupe"
     DIMENSION=$dimension
     NB_DECOUPE=$decoupe
@@ -35,43 +19,39 @@ for dimension in {1..5..1}; do
     $MATRIX_FOLDER/random_matrix.pl $DIMENSION $DIMENSION > $MATRIX_FOLDER/a
     $MATRIX_FOLDER/random_matrix.pl $DIMENSION $DIMENSION > $MATRIX_FOLDER/b
 
-    $folder/submit-job.sh $MATRIX_FOLDER/Makefile
+    total_execution_time=0
+    total_scheduling_time=0
 
-    # make clean
-    echo "Cleaning up"
-    make -C $MATRIX_FOLDER clean > /dev/null
-    # Capture the execution time
-    EXECUTION_TIME=$(<$execution_file)
+    for i in $(seq "$NB_ATTEMPTS"); do 
+      echo "Attempt $i"
 
-    # Append the execution time to the result file
-    echo "$DIMENSION; $NB_DECOUPE; $EXECUTION_TIME" >> $result_file
+      $folder/submit-job.sh $MATRIX_FOLDER/Makefile
 
+      if [ $? -ne 0 ]; then
+        echo "Error while submitting job"
+        exit 1
+      fi
+      
+      # make clean
+      echo "Cleaning up"
+      make -C $MATRIX_FOLDER clean > /dev/null
+      # First line is scheduling time, second line is execution time
+      SCHEDULING_TIME=$(head -n 1 $execution_file)
+      EXECUTION_TIME=$(tail -n 1 $execution_file)
+
+      total_execution_time=$(($total_execution_time + $EXECUTION_TIME))
+      total_scheduling_time=$(($total_scheduling_time + $SCHEDULING_TIME))
+
+      echo finished attempt $i
+    done 
+
+    average_execution_time=$(echo "scale=2; $total_execution_time / 3" | bc)
+    average_scheduling_time=$(echo "scale=2; $total_scheduling_time / 3" | bc)
+
+
+      # Append the execution time to the result file
+      echo "$DIMENSION; $NB_DECOUPE; $average_scheduling_time; $average_execution_time " >> $result_file
   done
 done
 
 echo "Execution results are stored in $output_file"
-
-
-
-# while IFS= read -r MAKEFILE_PATH; do
-#   rm executionTime.txt
-
-#   MAKEFILE_FOLDER=$(dirname $MAKEFILE_PATH)  
-#   # make clean and make
-#   make -C $MAKEFILE_FOLDER clean > /dev/null
-#   echo "Submitting $MAKEFILE_PATH"
-#   # Run spark-submit
-#   $folder/submit-job.sh $MAKEFILE_PATH
-#   # if execution time doesn't exist
-#   if [ ! -f executionTime.txt ]; then
-#     echo "Error submitting $MAKEFILE_PATH"
-#     continue
-#   fi
-
-#   # Capture the execution time
-#   EXECUTION_TIME=$(<executionTime.txt)
-
-#   # Append the execution time to the result file
-#   echo "$MAKEFILE_PATH; $EXECUTION_TIME" >> execution_time_result.txt
-#   echo "Done submitting $MAKEFILE_PATH"
-# done < $folder/makefiles/matrix/M

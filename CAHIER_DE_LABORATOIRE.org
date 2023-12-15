@@ -19,19 +19,21 @@
 * Déployement dans Grid 5000
 
 * Expérimentations
-Descriptif : 
-ShaGit : 
-Date :
-Machines utilisées : 
-Script de génération de résultats : 
-Fichier de stockage de résultats : 
+Descriptif : Test performance Matrix
+ShaGit : 2270d2998e82801f128db5c1223c8e1e45eeee3e
+Date : 15/12/2023
+Machines utilisées : 2 noeuds entier sur cluster dahu dont 1 master 1 worker
+1 Executor 64 coeurs, 1G memoire
+Script de génération de résultats : grid5000/run_experiment_matrix.sh
+Fichier de stockage de résultats : results/matrix-1-worker
 
-Descriptif : 
-ShaGit : 
-Date : 
-Machines utilisées :
-Script de génération de résultats : 
-Fichier de stockage de résultats : 
+Descriptif : Test performance Matrix
+ShaGit : 2270d2998e82801f128db5c1223c8e1e45eeee3e
+Date : 15/12/2023
+Machines utilisées : 3 noeuds entier sur cluster dahu dont 1 master 2 worker
+2 Executor 64 coeurs, 1G memoire
+Script de génération de résultats : grid5000/run_experiment_matrix.sh
+Fichier de stockage de résultats : results/matrix-2-workers
 
 
 * Fabrication des courbes de performances

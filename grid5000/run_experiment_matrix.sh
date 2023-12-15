@@ -45,8 +45,8 @@ for dimension in {1..1..1}; do
       echo finished attempt $i
     done 
 
-    average_execution_time=$(echo "scale=2; $total_execution_time / 3" | bc)
-    average_scheduling_time=$(echo "scale=2; $total_scheduling_time / 3" | bc)
+    average_execution_time=$(echo "scale=2; $total_execution_time / $NB_ATTEMPTS" | bc)
+    average_scheduling_time=$(echo "scale=2; $total_scheduling_time / $NB_ATTEMPTS" | bc)
 
 
       # Append the execution time to the result file

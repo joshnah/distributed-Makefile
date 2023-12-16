@@ -1,14 +1,18 @@
-# Vérifier si le package ggplot2 est installé
-if (!requireNamespace("ggplot2")) {
-  # Installer le package ggplot2
-  install.packages("ggplot2")
+# Check the number of arguments
+if (length(commandArgs(trailingOnly = TRUE)) != 1) {
+  stop("Usage: latency_perf.R \"<path/to/latency.csv>\"")
 }
-# Charger la bibliothèque ggplot2
+
+# Save the argument in a variable
+argument <- commandArgs(trailingOnly = TRUE)[1]
+
+# Load the ggplot2 package
 library(ggplot2)
 
-# Lire les données à partir du fichier CSV
-latency_data <- read.csv("latency.csv", sep = ';')
+# Read the latency data from the csv file
+latency_data <- read.csv(argument, sep = ';')
 
+# Plot the (read / write) latency average vs block size
 wr_plot <- ggplot(latency_data, aes(x = block_size)) +
   geom_line(aes(y = write_latency_average, color = "Write"), linetype = "solid") +
   geom_point(aes(y = write_latency_average, color = "Write")) +
@@ -18,6 +22,7 @@ wr_plot <- ggplot(latency_data, aes(x = block_size)) +
        x = "Block Size (bytes)",
        y = "Latency Average (s)") +
   scale_color_manual(name = "Legend", values = c("Write" = "blue", "Read" = "red")) 
-  
-# Enregistrer le graphique
-ggsave("write_and_read_latency_plot.png", wr_plot, width = 12, height = 6)
+
+dir <- dirname(argument)
+# Save the plot as a png file
+ggsave(dir+"/nfs_latency_plot.png", wr_plot, width = 12, height = 6)

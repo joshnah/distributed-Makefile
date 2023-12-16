@@ -40,6 +40,16 @@
    - Script de génération de résultats : `grid5000/run_experiment_matrix.sh`
    - Fichier de stockage de résultats : `results/matrix-2-workers`
 
+** Test performance NFS (latence écriture & lecture)
+
+   - Descriptif : La latence du système NFS est mesuré
+   - ShaGit : 2270d2998e82801f128db5c1223c8e1e45eeee3e
+   - Date : 16/12/2023
+   - Machines utilisées : 1 nœud entier sur le cluster dahu
+   - 2 Executors 64 cœurs, 1 Go mémoire
+   - Script de génération de résultats : `grid5000/run_experiment_matrix.sh`
+   - Fichier de stockage de résultats : `results/matrix-2-workers`
+
 
 * Fabrication des courbes de performances
 

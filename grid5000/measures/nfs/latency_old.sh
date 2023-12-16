@@ -4,7 +4,6 @@
 base_output_csv="latency"
 output_csv="$base_output_csv.csv"
 output_suffix=1
-test_duration=300  # in seconds
 num_tests=10
 block_sizes=("4k" "8k" "16k" "32k" "64k")  # block sizes to test
 

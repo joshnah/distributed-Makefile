@@ -9,25 +9,14 @@ library(ggplot2)
 # Lire les données à partir du fichier CSV
 latency_data <- read.csv("latency_3.csv", sep = ';')
 
-# Tracer la courbe de latence moyenne en écriture
-write_plot <- ggplot(latency_data, aes(x = block_size, y = write_latency_average)) +
-  geom_line(color = "blue") +
-  geom_point(color = "blue") +
-  labs(title = "Write Latency Average vs Block Size",
+wr_plot <- ggplot(latency_data, aes(x = block_size)) +
+  geom_line(aes(y = write_latency_average), color = "blue", linetype = "solid") +
+  geom_point(aes(y = write_latency_average), color = "blue") +
+  geom_line(aes(y = read_latency_average), color = "red", linetype = "solid") +
+  geom_point(aes(y = read_latency_average), color = "red") +
+  labs(title = "Write and Read Latency Average vs Block Size",
        x = "Block Size (bytes)",
-       y = "Write Latency Average (s)")
-
-# Tracer la courbe de latence moyenne en lecture
-read_plot <- ggplot(latency_data, aes(x = block_size, y = read_latency_average)) +
-  geom_line(color = "red") +
-  geom_point(color = "red") +
-  labs(title = "Read Latency Average vs Block Size",
-       x = "Block Size (bytes)",
-       y = "Read Latency Average (s)")
-
-# Afficher les deux graphiques côte à côte
-library(gridExtra)
-wr_plot <- grid.arrange(write_plot, read_plot, ncol = 2)
+       y = "Latency Average (s)")
 
 # Enregistrer le graphique
-ggsave("output_plot.png", wr_plot, width = 12, height = 6)
+ggsave("write_and_read_latency_plot.png", wr_plot, width = 12, height = 6)

@@ -17,7 +17,7 @@ convert_to_seconds() {
     local input=$1
     local minutes seconds
 
-    if [[ $input =~ ([0-9]+)m([0-9,]+)s ]]; then # regex: 0m0,000s
+    if [[ $input =~ ([0-9]+)m([0-9,\.]+)s ]]; then # regex: 0m0,000s
         minutes=${BASH_REMATCH[1]}
         seconds=${BASH_REMATCH[2]//,/.}  # replace , with . for bc
         echo "($minutes * 60) + $seconds" | bc -l
@@ -31,7 +31,7 @@ run_write_test() {
     local block_size=$1
     local average_latency=0.0
     local result time_result seconds
-    echo -n "$block_size" >> $output_csv
+    echo -n $(echo "$block_size" | sed 's/k/000/') >> $output_csv
     for ((i=1; i<=num_tests; ++i)); do
         echo "Running NFS write performance test with block size $block_size... ($i/$num_tests)"
         # extract the "real" time from the result
@@ -72,15 +72,15 @@ while [ -e "$output_csv" ]; do
 done
 
 # CSV Header
-echo -n "Block Size (bytes);" > $output_csv
+echo -n "block_size;" > $output_csv # bytes
 for ((i=1; i<=num_tests; ++i)); do
-    echo -n "Write Latency $i (s);" >> $output_csv
+    echo -n "write_latency_$i;" >> $output_csv # seconds
 done
-echo -n "Write Latency Average (s);" >> $output_csv
+echo -n "write_latency_average;" >> $output_csv
 for ((i=1; i<=num_tests; ++i)); do
-    echo -n "Read Latency $i (s);" >> $output_csv
+    echo -n "read_latency_$i;" >> $output_csv
 done
-echo "Read Latency Average (s)" >> $output_csv
+echo "read_latency_average" >> $output_csv
 
 # test for each block size
 for size in "${block_sizes[@]}"; do

@@ -14,26 +14,31 @@
 
 * Gestion du code
 
-** URL du gitlab de l'équipe
+[[https://github.com/joshnah/distributed-Makefile]](*URL du GitHub de l'équipe*)
 
-* Déployement dans Grid 5000
+* Déploiement dans Grid5000
 
 * Expérimentations
-Descriptif : Test performance Matrix
-ShaGit : 2270d2998e82801f128db5c1223c8e1e45eeee3e
-Date : 15/12/2023
-Machines utilisées : 2 noeuds entier sur cluster dahu dont 1 master 1 worker
-1 Executor 64 coeurs, 1G memoire
-Script de génération de résultats : grid5000/run_experiment_matrix.sh
-Fichier de stockage de résultats : results/matrix-1-worker
 
-Descriptif : Test performance Matrix
-ShaGit : 2270d2998e82801f128db5c1223c8e1e45eeee3e
-Date : 15/12/2023
-Machines utilisées : 3 noeuds entier sur cluster dahu dont 1 master 2 worker
-2 Executor 64 coeurs, 1G memoire
-Script de génération de résultats : grid5000/run_experiment_matrix.sh
-Fichier de stockage de résultats : results/matrix-2-workers
+** Test performance Matrix (temps d'exécution)
+
+   - Descriptif : Temps d'exécution mesuré sur `./makefiles/matrix.Makefile`, 1 worker
+   - ShaGit : 2270d2998e82801f128db5c1223c8e1e45eeee3e
+   - Date : 15/12/2023
+   - Machines utilisées : 2 nœuds entiers sur le cluster dahu, dont 1 master et 1 worker
+   - 1 Executor 64 cœurs, 1 Go mémoire
+   - Script de génération de résultats : `grid5000/run_experiment_matrix.sh`
+   - Fichier de stockage de résultats : `results/matrix-1-worker`
+
+** Test performance Matrix (temps d'exécution)
+
+   - Descriptif : Temps d'exécution mesuré sur `./makefiles/matrix.Makefile`, 2 workers
+   - ShaGit : 2270d2998e82801f128db5c1223c8e1e45eeee3e
+   - Date : 15/12/2023
+   - Machines utilisées : 3 nœuds entiers sur le cluster dahu, dont 1 master et 2 workers
+   - 2 Executors 64 cœurs, 1 Go mémoire
+   - Script de génération de résultats : `grid5000/run_experiment_matrix.sh`
+   - Fichier de stockage de résultats : `results/matrix-2-workers`
 
 
 * Fabrication des courbes de performances

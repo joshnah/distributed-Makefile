@@ -25,4 +25,4 @@ wr_plot <- ggplot(latency_data, aes(x = block_size)) +
 
 dir <- dirname(argument)
 # Save the plot as a png file
-ggsave(dir+"/nfs_latency_plot.png", wr_plot, width = 12, height = 6)
+ggsave(paste0(dir, "/nfs_latency_plot.png"), wr_plot, width = 12, height = 6)

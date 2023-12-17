@@ -45,21 +45,11 @@ for dimension in {1..1..1}; do
 
       # First line is scheduling time, second line is execution time
       SCHEDULING_TIME=$(head -n 1 $execution_file)
-      EXECUTION_TIME=$(tail -n 1 $execution_file)
-
-      total_execution_time=$(($total_execution_time + $EXECUTION_TIME))
-      total_scheduling_time=$(($total_scheduling_time + $SCHEDULING_TIME))
 
       echo finished attempt $i
+      echo "$DIMENSION; $NB_DECOUPE; $EXECUTION_TIME" >> $result_file
     done 
-
-    average_execution_time=$(echo "scale=2; $total_execution_time / $NB_ATTEMPTS" | bc)
-    average_scheduling_time=$(echo "scale=2; $total_scheduling_time / $NB_ATTEMPTS" | bc)
-
-
-      # Append the execution time to the result file
-      echo "$DIMENSION; $NB_DECOUPE; $average_scheduling_time; $average_execution_time " >> $result_file
   done
 done
 
-echo "Execution results are stored in $output_file"
+echo "Execution results are stored in $result_file"

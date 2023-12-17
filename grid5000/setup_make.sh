@@ -1,7 +1,7 @@
 #!/bin/bash
-# Script to reserve nodes, deploy the environment and compile the makefile
+# Script to reserve nodes, deploy the environment and compile a list of makefiles
 if [ $# -eq 0 ]; then
-    echo "Usage: ./deploy-run.sh <nb_nodes> <list_of_makefiles>"
+    echo "Usage: ./deploy-run.sh <nb_nodes> <file containing makefiles paths>"
     exit 1
 fi
 

@@ -1,11 +1,18 @@
-# Output file
-result_file="execution_time_result.txt"
+# Run the matrix multiplication experiment on Grid5000 proving that spark is deployed correctly
+# Final result is stored in execution_time_result.txt
+result_file="matrix_result.txt"
 execution_file="executionTime.txt"
 folder=$(pwd)/$(dirname "${BASH_SOURCE[0]}")   
 echo "folder: $folder"
-MATRIX_FOLDER=$folder/../makefiles/matrix
+MATRIX_FOLDER=$folder/../../makefiles/matrix
 NB_ATTEMPTS=3
 
+# if NB_ATTEMPTS is provided
+if [ ! -z "$1" ]; then
+  NB_ATTEMPTS=$1
+fi
+
+# Clean up the result file
 > $result_file
 echo "Dimension; Decoupe; Scheduling Time, Execution Time" >> $result_file
 # Loop over dimensions
@@ -25,7 +32,7 @@ for dimension in {1..1..1}; do
     for i in $(seq "$NB_ATTEMPTS"); do 
       echo "Attempt $i"
 
-      $folder/submit-job.sh $MATRIX_FOLDER/Makefile
+      $folder/../submit-job.sh $MATRIX_FOLDER/Makefile
 
       if [ $? -ne 0 ]; then
         echo "Error while submitting job"
@@ -35,6 +42,7 @@ for dimension in {1..1..1}; do
       # make clean
       echo "Cleaning up"
       make -C $MATRIX_FOLDER clean > /dev/null
+
       # First line is scheduling time, second line is execution time
       SCHEDULING_TIME=$(head -n 1 $execution_file)
       EXECUTION_TIME=$(tail -n 1 $execution_file)

@@ -109,10 +109,7 @@ object Main {
                     .setMaster(masterUrl)
                     .set("spark.log.level", "ERROR")
                     .set("spark.task.maxFailures", "1")
-
                     val driverCtx = new SparkContext(conf)
-                    val totalCores = conf.get("spark.executor.instances").toInt * conf.get("spark.executor.cores").toInt
-                    println("total number of cores" + totalCores)
                 // Logs coming from all drivers.
                 class Log(val id: Long, val command: Boolean, val content: String) extends Serializable
                 val logs = driverCtx.collectionAccumulator[Log]("Logs")
@@ -123,8 +120,7 @@ object Main {
                 for (case (level, index) <- scheduling.zipWithIndex) {
 
                     println(s"Parallelizing ${level.length} targets") 
-                    val rdd = driverCtx.parallelize(level.map(_.commands)).repartition(totalCores * 3) // transmet all the commands of the level
-                    println("Number of partitions: " + rdd.getNumPartitions)
+                    val rdd = driverCtx.parallelize(level.map(_.commands), level.length) // transmet all the commands of the level
                     val future = rdd.foreachAsync(commands => {
 
                         val taskCtx = TaskContext.get()

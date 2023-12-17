@@ -14,41 +14,50 @@ fi
 
 # Clean up the result file
 > $result_file
-echo "Dimension; Decoupe; Scheduling Time, Execution Time" >> $result_file
-# Loop over dimensions
-for dimension in {1..1..1}; do
-  for decoupe in {5..5..10}; do
-    echo "Running for Dimension: $dimension, Decoupe: $decoupe"
-    DIMENSION=$dimension
-    NB_DECOUPE=$decoupe
+echo "Nb_executor; nb_cores_per_executor; nb_memory_per_executor;Dimension; Decoupe; Scheduling Time, Execution Time" >> $result_file
 
-    $MATRIX_FOLDER/generate_makefile.pl $NB_DECOUPE > $MATRIX_FOLDER/Makefile
-    $MATRIX_FOLDER/random_matrix.pl $DIMENSION $DIMENSION > $MATRIX_FOLDER/a
-    $MATRIX_FOLDER/random_matrix.pl $DIMENSION $DIMENSION > $MATRIX_FOLDER/b
+TOTAL_CORES=64
+NB_MEMORY_PER_EXECUTOR="1g"
+for nb_executors in {1,2}; do
+  NB_CORES_PER_EXECUTOR=$(($TOTAL_CORES / $nb_executors))
+  echo "Running for nb_executors: $nb_executors, nb_cores_per_executor: $NB_CORES_PER_EXECUTOR, nb_memory_per_executor: $NB_MEMORY_PER_EXECUTOR"
 
-    total_execution_time=0
-    total_scheduling_time=0
+  taktuk -l root -f ~/oar_node_file broadcast exec [ "echo spark.executor.instances=$nb_executors > /opt/spark-3.5.0-bin-hadoop3/conf/spark-defaults.conf" ]
+  taktuk -l root -f ~/oar_node_file broadcast exec [ "echo spark.executor.cores=$NB_CORES_PER_EXECUTOR >> /opt/spark-3.5.0-bin-hadoop3/conf/spark-defaults.conf" ]
+  taktuk -l root -f ~/oar_node_file broadcast exec [ "echo spark.executor.memory=$NB_MEMORY_PER_EXECUTOR >> /opt/spark-3.5.0-bin-hadoop3/conf/spark-defaults.conf" ]
 
-    for i in $(seq "$NB_ATTEMPTS"); do 
-      echo "Attempt $i"
+  for dimension in {20..20..1}; do
+    for decoupe in {2,4,8}; do
+      echo "Running for Dimension: $dimension, Decoupe: $decoupe"
+      DIMENSION=$dimension
+      NB_DECOUPE=$decoupe
 
-      $folder/../submit-job.sh $MATRIX_FOLDER/Makefile 2> /dev/null
+      $MATRIX_FOLDER/generate_makefile.pl $NB_DECOUPE > $MATRIX_FOLDER/Makefile
+      $MATRIX_FOLDER/random_matrix.pl $DIMENSION $DIMENSION > $MATRIX_FOLDER/a
+      $MATRIX_FOLDER/random_matrix.pl $DIMENSION $DIMENSION > $MATRIX_FOLDER/b
 
-      if [ $? -ne 0 ]; then
-        echo "Error while submitting job"
-        exit 1
-      fi
-      
-      # make clean
-      echo "Cleaning up"
-      make -C $MATRIX_FOLDER clean > /dev/null
+      for i in $(seq "$NB_ATTEMPTS"); do 
+        echo "Attempt $i"
 
-      # First line is scheduling time, second line is execution time
-      SCHEDULING_TIME=$(head -n 1 $execution_file)
+        $folder/../submit-job.sh $MATRIX_FOLDER/Makefile 2> /dev/null
 
-      echo finished attempt $i
-      echo "$DIMENSION; $NB_DECOUPE; $EXECUTION_TIME" >> $result_file
-    done 
+        if [ $? -ne 0 ]; then
+          echo "Error while submitting job"
+          exit 1
+        fi
+        
+        # make clean
+        echo "Cleaning up"
+        make -C $MATRIX_FOLDER clean > /dev/null
+
+        # First line is scheduling time, second line is execution time
+        SCHEDULING_TIME=$(head -n 1 $execution_file)
+        EXECUTION_TIME=$(tail -n 1 $execution_file)
+
+        echo finished attempt $i
+        echo "$nb_executors; $NB_CORES_PER_EXECUTOR; $NB_MEMORY_PER_EXECUTOR; $DIMENSION; $NB_DECOUPE; $SCHEDULING_TIME; $EXECUTION_TIME" >> $result_file
+      done 
+    done
   done
 done
 

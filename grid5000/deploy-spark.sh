@@ -1,10 +1,6 @@
 # usage ./deploy-spark.sh nb_executors cores_per_executor  memory_per_executor 
 # example ./deploy-spark.sh 2 2 2G
-# if no args
-if [ $# -eq 0 ]; then
-    echo "usage ./deploy-spark.sh nb_executors cores_per_executor  memory_per_executor"
-    exit 1
-fi
+
 
 # check if there is OAR_NODE_FILE
 if [ ! -f ~/oar_node_file ]; then

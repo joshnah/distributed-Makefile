@@ -21,7 +21,7 @@ $folder/reserve-deploy.sh $1
 $folder/copy_file_to_nodes.sh $folder/../distributed-makefile_2.12-0.1.0-SNAPSHOT.jar /opt/spark-3.5.0-bin-hadoop3/
 
 # Deploy Spark
-$folder/deploy-spark.sh 1 64 2g
+$folder/deploy-spark.sh
 
 if [ ! -z "$2" ];
 then

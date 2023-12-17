@@ -16,19 +16,16 @@ fi
 > $result_file
 echo "nb_executors; nb_cores_per_executor; nb_memory_per_executor, Execution Time" >> $result_file
 TOTAL_CORES=64
-NB_MEMORY_PER_EXECUTOR="2g"
+NB_MEMORY_PER_EXECUTOR="1g"
 gcc -o $PREMIER_FOLDER/premier $PREMIER_FOLDER/premier.c -lm
 # loop through value of nb_executors 2 4 8 16 32  
-for nb_executors in {2,4,8,16,32}; do
+for nb_executors in {1,2,4}; do
   NB_CORES_PER_EXECUTOR=$(($TOTAL_CORES / $nb_executors))
   echo "Running for nb_executors: $nb_executors, nb_cores_per_executor: $NB_CORES_PER_EXECUTOR, nb_memory_per_executor: $NB_MEMORY_PER_EXECUTOR"
 
   taktuk -l root -f ~/oar_node_file broadcast exec [ "echo spark.executor.instances=$nb_executors > /opt/spark-3.5.0-bin-hadoop3/conf/spark-defaults.conf" ]
   taktuk -l root -f ~/oar_node_file broadcast exec [ "echo spark.executor.cores=$NB_CORES_PER_EXECUTOR >> /opt/spark-3.5.0-bin-hadoop3/conf/spark-defaults.conf" ]
   taktuk -l root -f ~/oar_node_file broadcast exec [ "echo spark.executor.memory=$NB_MEMORY_PER_EXECUTOR >> /opt/spark-3.5.0-bin-hadoop3/conf/spark-defaults.conf" ]
-
-  total_execution_time=0
-  total_scheduling_time=0
 
   for i in $(seq "$NB_ATTEMPTS"); do 
     echo "Attempt $i"
@@ -48,18 +45,10 @@ for nb_executors in {2,4,8,16,32}; do
     SCHEDULING_TIME=$(head -n 1 $execution_file)
     EXECUTION_TIME=$(tail -n 1 $execution_file)
 
-    total_execution_time=$(($total_execution_time + $EXECUTION_TIME))
-    total_scheduling_time=$(($total_scheduling_time + $SCHEDULING_TIME))
-
     echo finished attempt $i
+    echo "$nb_executors; $NB_CORES_PER_EXECUTOR; $NB_MEMORY_PER_EXECUTOR; $EXECUTION_TIME" >> $result_file
+
   done
-
-
-  average_execution_time=$(echo "scale=2; $total_execution_time / $NB_ATTEMPTS" | bc)
-  average_scheduling_time=$(echo "scale=2; $total_scheduling_time / $NB_ATTEMPTS" | bc)
-
-  echo "$nb_executors; $NB_CORES_PER_EXECUTOR; $NB_MEMORY_PER_EXECUTOR; $average_execution_time " >> $result_file
-  echo "For $nb_executors executors, average execution time: $average_execution_time"
 done
 
 echo "Execution results are stored in $result_file"

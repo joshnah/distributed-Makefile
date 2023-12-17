@@ -33,7 +33,7 @@ for nb_executors in {2,4,8,16,32}; do
   for i in $(seq "$NB_ATTEMPTS"); do 
     echo "Attempt $i"
 
-    $folder/../submit-job.sh $PREMIER_FOLDER/Makefile-small
+    $folder/../submit-job.sh $PREMIER_FOLDER/Makefile-small 2> /dev/null
 
     if [ $? -ne 0 ]; then
       echo "Error while submitting job"

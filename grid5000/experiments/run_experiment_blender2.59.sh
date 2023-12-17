@@ -17,7 +17,7 @@ fi
 taktuk -l root -f ~/oar_node_file broadcast exec [ "apt-get install -y blender imagemagick ffmpeg" ]
 
 
-rm -f $BLENDER_FOLDER/*.png $BLENDER_FOLDER/*.jpg $BLENDER_FOLDER/*.tga > /dev/null
+rm -f $BLENDER_FOLDER/*.png $BLENDER_FOLDER/*.jpg $BLENDER_FOLDER/*.tga $BLENDER_FOLDER/*.avi > /dev/null
 
 echo "nb_frames" > $result_file
 # loop through value of nb_executors 2 4 8 16 32  
@@ -26,11 +26,11 @@ for nb_frames in {10..60..10}; do
   total_execution_time=0
   total_scheduling_time=0
 
-  $BLENDER_FOLDER/generate_blender_make.pl $BLENDER_FOLDER/cube_anime.blend $BLENDER_FOLDER/cubesphere.blend $BLENDER_FOLDER/dolphin.blend $nb_frames $nb_frames $nb_frames  > $BLENDER_FOLDER/Makefile
+  $BLENDER_FOLDER/generate_blender_make.pl $BLENDER_FOLDER/cube_anim.blend $BLENDER_FOLDER/cubesphere.blend $BLENDER_FOLDER/dolphin.blend $nb_frames $nb_frames $nb_frames  > $BLENDER_FOLDER/Makefile
   for i in $(seq "$NB_ATTEMPTS"); do 
     echo "Attempt $i"
 
-    $folder/../submit-job.sh $BLENDER_FOLDER/Makefile
+    $folder/../submit-job.sh $BLENDER_FOLDER/Makefile 2> /dev/null
 
     if [ $? -ne 0 ]; then
       echo "Error while submitting job"
@@ -39,7 +39,7 @@ for nb_frames in {10..60..10}; do
     
     # make clean
     echo "Cleaning up"
-    rm -f $BLENDER_FOLDER/*.png $BLENDER_FOLDER/*.jpg $BLENDER_FOLDER/*.tga > /dev/null
+    rm -f $BLENDER_FOLDER/*.png $BLENDER_FOLDER/*.jpg $BLENDER_FOLDER/*.tga $BLENDER_FOLDER/*.avi > /dev/null
 
     # First line is scheduling time, second line is execution time
     SCHEDULING_TIME=$(head -n 1 $execution_file)
@@ -55,8 +55,8 @@ for nb_frames in {10..60..10}; do
   average_execution_time=$(echo "scale=2; $total_execution_time / $NB_ATTEMPTS" | bc)
   average_scheduling_time=$(echo "scale=2; $total_scheduling_time / $NB_ATTEMPTS" | bc)
 
-  echo "number of frames: $nb_frames, average execution time: $average_execution_time, average scheduling time: $average_scheduling_time"
-  echo "$nb_frames; $average_execution_time; $average_scheduling_time" >> $result_file
+  echo "number of frames: $nb_frames,average scheduling time: $average_scheduling_time, average execution time: $average_execution_time"
+  echo "$nb_frames;$average_scheduling_time; $average_execution_time; " >> $result_file
 
 done
 

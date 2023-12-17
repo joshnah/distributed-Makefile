@@ -32,7 +32,7 @@ for dimension in {1..1..1}; do
     for i in $(seq "$NB_ATTEMPTS"); do 
       echo "Attempt $i"
 
-      $folder/../submit-job.sh $MATRIX_FOLDER/Makefile
+      $folder/../submit-job.sh $MATRIX_FOLDER/Makefile 2> /dev/null
 
       if [ $? -ne 0 ]; then
         echo "Error while submitting job"

@@ -62,17 +62,16 @@ else
 fi
 
 # CSV Header
-echo "block_size;write_latency;read_latency" > $output_csv
+echo "write_latency;read_latency" > $output_csv
 
 # test
 for ((i=1; i<=NUM_TESTS; ++i)); do
-    echo "Running NFS write performance test with block size $block_size... ($i/$NUM_TESTS)"
+    echo "Running NFS write performance test with block size $BLOCK_SIZE... ($i/$NUM_TESTS)"
     run_write_test $BLOCK_SIZE
-    echo "Running NFS read performance test with block size $block_size... ($i/$NUM_TESTS)"
+    echo "Running NFS read performance test with block size $BLOCK_SIZE... ($i/$NUM_TESTS)"
     run_read_test $BLOCK_SIZE
 done
 
 rm $TESTFILE
 
 echo "Tests completed. Data saved in: $output_csv"
-# echo "$output_csv" > "result_path.txt"

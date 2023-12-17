@@ -13,4 +13,3 @@ result_path=$(cat ~/distributed-Makefile/grid5000/measures/nfs/result_path.txt)
 # generate plots
 Rscript ~/distributed-Makefile/grid5000/measures/nfs/latency_perf.R $result_path
 
-rm ~/distributed-Makefile/grid5000/measures/nfs/result_path.txt

@@ -14,33 +14,42 @@ latency_data <- read.csv(argument, sep = ';')
 
 # Plot the (read / write) latency average vs block size
 wr_plot <- ggplot(latency_data, aes(x = block_size)) +
-  geom_line(aes(y = write_mediane, color = "Write_MED"), linetype = "solid") +
-  geom_point(size = 0.25, aes(y = write_latency_1, color = "Write")) +
-  geom_point(size = 0.25, aes(y = write_latency_2, color = "Write")) +
-  geom_point(size = 0.25, aes(y = write_latency_3, color = "Write")) +
-  geom_point(size = 0.25, aes(y = write_latency_4, color = "Write")) +
-  geom_point(size = 0.25, aes(y = write_latency_5, color = "Write")) +
-  geom_point(size = 0.25, aes(y = write_latency_6, color = "Write")) +
-  geom_point(size = 0.25, aes(y = write_latency_7, color = "Write")) +
-  geom_point(size = 0.25, aes(y = write_latency_8, color = "Write")) +
-  geom_point(size = 0.25, aes(y = write_latency_9, color = "Write")) +
-  geom_point(size = 0.25, aes(y = write_latency_10, color = "Write")) +
-  geom_point(size = 0.25, aes(y = write_mediane, color = "Write_MED")) +
-  geom_line(aes(y = read_mediane, color = "Read_MED"), linetype = "solid") +
-  geom_point(size = 0.25, aes(y = read_latency_1, color = "Read")) +
-  geom_point(size = 0.25, aes(y = read_latency_2, color = "Read")) +
-  geom_point(size = 0.25, aes(y = read_latency_3, color = "Read")) +
-  geom_point(size = 0.25, aes(y = read_latency_4, color = "Read")) +
-  geom_point(size = 0.25, aes(y = read_latency_5, color = "Read")) +
-  geom_point(size = 0.25, aes(y = read_latency_6, color = "Read")) +
-  geom_point(size = 0.25, aes(y = read_latency_7, color = "Read")) +
-  geom_point(size = 0.25, aes(y = read_latency_8, color = "Read")) +
-  geom_point(size = 0.25, aes(y = read_latency_9, color = "Read")) +
-  geom_point(size = 0.25, aes(y = read_latency_10, color = "Read")) +
-  geom_point(size = 0.25, aes(y = read_mediane, color = "Read_MED")) +
+  geom_point(size = 0.25, aes(y = w_lat_1, color = "Write")) +
+  geom_point(size = 0.25, aes(y = w_lat_2, color = "Write")) +
+  geom_point(size = 0.25, aes(y = w_lat_3, color = "Write")) +
+  geom_point(size = 0.25, aes(y = w_lat_4, color = "Write")) +
+  geom_point(size = 0.25, aes(y = w_lat_5, color = "Write")) +
+  geom_point(size = 0.25, aes(y = w_lat_6, color = "Write")) +
+  geom_point(size = 0.25, aes(y = w_lat_7, color = "Write")) +
+  geom_point(size = 0.25, aes(y = w_lat_8, color = "Write")) +
+  geom_point(size = 0.25, aes(y = w_lat_9, color = "Write")) +
+  geom_point(size = 0.25, aes(y = w_lat_10, color = "Write")) +
+  geom_point(size = 0.25, aes(y = w_lat_med, color = "Write_Med")) +
+  geom_point(size = 0.25, aes(y = w_lat_min, color = "Write_Min")) +
+  geom_point(size = 0.25, aes(y = w_lat_max, color = "Write_Max")) +
+  geom_line(aes(y = w_lat_med, color = "Write_Med"), linetype = "solid") +
+  geom_line(aes(y = w_lat_min, color = "Write_Min"), linetype = "solid") +
+  geom_line(aes(y = w_lat_max, color = "Write_Max"), linetype = "solid") +
+  geom_point(size = 0.25, aes(y = r_lat_1, color = "Read")) +
+  geom_point(size = 0.25, aes(y = r_lat_2, color = "Read")) +
+  geom_point(size = 0.25, aes(y = r_lat_3, color = "Read")) +
+  geom_point(size = 0.25, aes(y = r_lat_4, color = "Read")) +
+  geom_point(size = 0.25, aes(y = r_lat_5, color = "Read")) +
+  geom_point(size = 0.25, aes(y = r_lat_6, color = "Read")) +
+  geom_point(size = 0.25, aes(y = r_lat_7, color = "Read")) +
+  geom_point(size = 0.25, aes(y = r_lat_8, color = "Read")) +
+  geom_point(size = 0.25, aes(y = r_lat_9, color = "Read")) +
+  geom_point(size = 0.25, aes(y = r_lat_10, color = "Read")) +
+  geom_point(size = 0.25, aes(y = r_lat_med, color = "Read_Med")) +
+  geom_point(size = 0.25, aes(y = r_lat_min, color = "Read_Min")) +
+  geom_point(size = 0.25, aes(y = r_lat_max, color = "Read_Max")) +
+  geom_line(aes(y = r_lat_med, color = "Read_Med"), linetype = "solid") +
+  geom_line(aes(y = r_lat_min, color = "Read_Min"), linetype = "solid") +
+  geom_line(aes(y = r_lat_max, color = "Read_Max"), linetype = "solid") +
+  geom_line(aes(y = r_lat_med, color = "Read_Med"), linetype = "solid") +
 	scale_x_continuous(breaks = unique(latency_data$block_size)) +
   scale_y_continuous(breaks = c(unique(latency_data$read_mediane), unique(latency_data$write_mediane))) +
-  labs(title = "Write and Read Latency Mediane vs Block Size",
+  labs(title = "Write and Read Latency vs Block Size",
        x = "Block Size (bytes)",
        y = "Latency Mediane (s)") +
   theme(axis.text.x = element_text(size = 6),
@@ -50,7 +59,7 @@ wr_plot <- ggplot(latency_data, aes(x = block_size)) +
       legend.title = element_text(size = 8),
       axis.title.x = element_text(size = 8),
       axis.title.y = element_text(size = 8)) +
-  scale_color_manual(name = "Legend", values = c("Write" = "blue", "Read" = "red", "Write_MED" = "blue4", "Read_MED" = "red4")) 
+  scale_color_manual(name = "Legend", values = c("Write" = "blue", "Read" = "red", "Write_Med" = "blue4", "Read_Med" = "red4","Write_Min" = "lightskyblue", "Read_Min" = "indianred1","Write_Max" = "royalblue4", "Read_Max" = "indianred4")) 
 
 dir <- dirname(argument)
 # Save the plot as a png file

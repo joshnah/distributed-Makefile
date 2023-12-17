@@ -86,7 +86,7 @@ object Main {
         println(s"### Scheduling time: $schedulingTime miliseconds ###")
         println(s"### Scheduling ${scheduling.length} in total ###\n")
         // for (case (targets, index) <- scheduling.zipWithIndex) {
-        //     println(s"Step $index: ${targets.map(_.name).mkString(", ")}\n")
+            //     println(s"Step $index: ${targets.map(_.name).mkString(", ")}\n")
         // }
         // println("### End Scheduling ###\n")
 
@@ -110,8 +110,9 @@ object Main {
                     .set("spark.log.level", "ERROR")
                     .set("spark.task.maxFailures", "1")
 
-                val driverCtx = new SparkContext(conf)
-                
+                    val driverCtx = new SparkContext(conf)
+                    val totalCores = conf.get("spark.executor.instances").toInt * conf.get("spark.executor.cores").toInt
+                    println("total number of cores" + totalCores)
                 // Logs coming from all drivers.
                 class Log(val id: Long, val command: Boolean, val content: String) extends Serializable
                 val logs = driverCtx.collectionAccumulator[Log]("Logs")
@@ -121,8 +122,9 @@ object Main {
                 // iterate over scheduling and execute each target
                 for (case (level, index) <- scheduling.zipWithIndex) {
 
-                    
-                    val rdd = driverCtx.parallelize(level.map(_.commands)) // transmet all the commands of the level
+                    println(s"Parallelizing ${level.length} targets") 
+                    val rdd = driverCtx.parallelize(level.map(_.commands)).repartition(totalCores * 3) // transmet all the commands of the level
+                    println("Number of partitions: " + rdd.getNumPartitions)
                     val future = rdd.foreachAsync(commands => {
 
                         val taskCtx = TaskContext.get()
@@ -136,6 +138,7 @@ object Main {
 
 
                             val exitCode = Process(Seq("bash", "-c", command), runDir).!(logger)
+                            println(s"### Command $command finished ###\n")
                             if (exitCode != 0) {
                                 writer.close()
                                 logs.add(new Log(id, true, command))
@@ -184,7 +187,7 @@ object Main {
                 writer.write(s"$schedulingTime\n")
                 writer.write(s"$executionTime\n")
                 writer.close()
-
+                
                 driverCtx.stop()
 
                 println("### End Run ###\n")

@@ -22,7 +22,7 @@ for dimension in {1..1..1}; do
     DIMENSION=$dimension
     NB_DECOUPE=$decoupe
 
-    $MATRIX_FOLDER/generate_makefile.pl $DIMENSION $NB_DECOUPE > $MATRIX_FOLDER/Makefile
+    $MATRIX_FOLDER/generate_makefile.pl $NB_DECOUPE > $MATRIX_FOLDER/Makefile
     $MATRIX_FOLDER/random_matrix.pl $DIMENSION $DIMENSION > $MATRIX_FOLDER/a
     $MATRIX_FOLDER/random_matrix.pl $DIMENSION $DIMENSION > $MATRIX_FOLDER/b
 

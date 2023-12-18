@@ -110,16 +110,7 @@ object Main {
                     .set("spark.log.level", "ERROR")
                     .set("spark.task.maxFailures", "1")
                     .set("spark.locality.wait", "0")
-                    .set("spark.scheduler.mode", "FAIR")
-                    .set("spark.dynamicAllocation.enabled", "true")
-                    .set("spark.dynamicAllocation.minExecutors", "1")
-                    .set("spark.dynamicAllocation.maxExecutors", "100")
-                    .set("spark.dynamicAllocation.initialExecutors", "1")
-                    .set("spark.dynamicAllocation.executorIdleTimeout", "60s")
-                    .set("spark.dynamicAllocation.cachedExecutorIdleTimeout", "60s")
-                    .set("spark.dynamicAllocation.sustainedSchedulerBacklogTimeout", "60s")
-                    .set("spark.dynamicAllocation.shuffleTracking.enabled", "true")
-                    
+
                     val driverCtx = new SparkContext(conf)
                 // Logs coming from all drivers.
                 class Log(val id: Long, val command: Boolean, val content: String) extends Serializable
@@ -131,53 +122,10 @@ object Main {
                 for (case (level, index) <- scheduling.zipWithIndex) {
 
                     println(s"Parallelizing ${level.length} targets") 
-                    val rdd = driverCtx.parallelize(level.map(_.commands)).repartition(100)// transmet all the commands of the level
+                    val rdd = driverCtx.parallelize(level.flatMap(_.commands), numSlices = level.length)
                     
                     println(s"Number of partitions: ${rdd.getNumPartitions}")
-                    val future = rdd.foreachAsync(commands => {
-
-                        val taskCtx = TaskContext.get()
-                        val id = taskCtx.taskAttemptId()
-                        
-                        commands.foreach(command => {
-
-                            val stream = new ByteArrayOutputStream
-                            val writer = new PrintWriter(stream)
-                            val logger = ProcessLogger(writer.println, writer.println)
-
-
-                            val exitCode = Process(Seq("bash", "-c", command), runDir).!(logger)
-                            println(s"### Command $command finished ###\n")
-                            if (exitCode != 0) {
-                                writer.close()
-                                logs.add(new Log(id, true, command))
-                                logs.add(new Log(-1, false, "ERROR: command failed with exit code " + exitCode + "\n"+  stream.toString()))
-                                // sys.exit(1)
-                            }
-                            
-
-                            writer.close()
-                            // logs.add(new Log(id, false, stream.toString()))
-                            
-                        })
-                    })
-
-                    var i = 0;
-                    while (!future.isCompleted) {
-                        while (i < logs.value.size) {
-                            val log = logs.value.get(i);
-                            // If fail, stop the execution
-                            if (log.id == -1) {
-                                println(s"${log.content.strip()}")
-                                driverCtx.cancelAllJobs()
-                                driverCtx.stop()
-                                sys.exit(1)
-                            } 
-                            println(s"${log.content.strip()}")
-                            i += 1;
-                        }
-                    }
-                    logs.reset()
+                    rdd.foreach(run)
                     println(s"### Level $index finished ###\n")
                 }
 

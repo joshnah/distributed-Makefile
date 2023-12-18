@@ -118,10 +118,12 @@ object Main {
 
                 startTime = System.currentTimeMillis()
                 println("### Start Run text file ###\n")
-                // read file commandes.txt, transform it to RDD and split it
-                val commands = driverCtx.textFile("commandes.txt").flatMap(_.split("\n"))
-                commands.foreach(run)
-
+                // read file commandes.txt, transform it to RDD, partition it, and run each command in a partition
+                val commands = driverCtx.textFile("commandes.txt").repartition(4).foreachPartition { partition =>
+                    partition.foreach { command =>
+                        run(command)
+                    }
+                }
 
                 // Record the end time
                 endTime = System.currentTimeMillis()
@@ -139,6 +141,10 @@ object Main {
                 writer.write(s"$executionTime\n")
                 writer.close()
                 
+                while (true){
+                    Thread.sleep(2000)
+                }
+
                 driverCtx.stop()
 
                 println("### End Run ###\n")

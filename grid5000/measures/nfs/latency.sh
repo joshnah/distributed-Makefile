@@ -121,7 +121,7 @@ run_write_test() {
     local variance=$(calculate_variance "${all_seconds[@]}")
     # calculate standard deviation
     local stddev=$(calculate_std_deviation "${all_seconds[@]}")
-    echo -n ";$mean;$median;$min;$max;$variance;$stddev;" >> $output_csv
+    echo -n ";$mean;$median;$min;$max;$variance;$stddev" >> $output_csv
 }
 
 # read test latency
@@ -170,7 +170,7 @@ echo -n "block_size;" > $output_csv # bytes
 for ((i=1; i<=NUM_TESTS; ++i)); do
     echo -n "w_lat_$i;" >> $output_csv # seconds
 done
-echo -n "w_lat_av;w_lat_med;w_lat_min;w_lat_max;w_lat_var;w_lat_stddev" >> $output_csv
+echo -n "w_lat_av;w_lat_med;w_lat_min;w_lat_max;w_lat_var;w_lat_stddev;" >> $output_csv
 
 for ((i=1; i<=NUM_TESTS; ++i)); do
     echo -n "r_lat_$i;" >> $output_csv

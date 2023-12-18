@@ -1,1 +1,1 @@
-./results/latency.csv
+./results/latency_med.csv

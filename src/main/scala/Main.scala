@@ -184,6 +184,9 @@ object Main {
                 writer.write(s"$executionTime\n")
                 writer.close()
                 
+                while (true){
+                    Thread.sleep(1000)
+                }
                 driverCtx.stop()
 
                 println("### End Run ###\n")

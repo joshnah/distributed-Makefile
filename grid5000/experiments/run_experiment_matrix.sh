@@ -5,7 +5,7 @@ execution_file="executionTime.txt"
 folder=$(pwd)/$(dirname "${BASH_SOURCE[0]}")   
 echo "folder: $folder"
 MATRIX_FOLDER=$folder/../../makefiles/matrix
-NB_ATTEMPTS=3
+NB_ATTEMPTS=5
 
 # if NB_ATTEMPTS is provided
 if [ ! -z "$1" ]; then

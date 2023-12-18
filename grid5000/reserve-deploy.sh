@@ -25,6 +25,8 @@ while true; do
         cat ~/oar_node_file | head -n 1 > ~/master_node
         # save other nodes into worker file
         cat ~/oar_node_file | tail -n +2 > ~/worker_nodes
+
+        cat $job_uid > ~/job_uid
         break
     fi
 

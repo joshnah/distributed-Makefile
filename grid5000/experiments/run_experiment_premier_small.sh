@@ -1,6 +1,6 @@
 # Run the matrix multiplication experiment on Grid5000 proving that spark is deployed correctly
 # Final result is stored in execution_time_result.txt
-result_file="premier_result.txt"
+result_file="premier_result_small.txt"
 execution_file="executionTime.txt"
 folder=$(pwd)/$(dirname "${BASH_SOURCE[0]}")   
 echo "folder: $folder"
@@ -30,7 +30,7 @@ for nb_executors in {1,2,4}; do
   for i in $(seq "$NB_ATTEMPTS"); do 
     echo "Attempt $i"
 
-    $folder/../submit-job.sh $PREMIER_FOLDER/Makefile 2> /dev/null
+    $folder/../submit-job.sh $PREMIER_FOLDER/Makefile-small 2> /dev/null
 
     if [ $? -ne 0 ]; then
       echo "Error while submitting job"

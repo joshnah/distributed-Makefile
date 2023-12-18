@@ -111,6 +111,15 @@ object Main {
                     .set("spark.task.maxFailures", "1")
                     .set("spark.locality.wait", "0")
                     .set("spark.scheduler.mode", "FAIR")
+                    .set("spark.dynamicAllocation.enabled", "true")
+                    .set("spark.dynamicAllocation.minExecutors", "1")
+                    .set("spark.dynamicAllocation.maxExecutors", "100")
+                    .set("spark.dynamicAllocation.initialExecutors", "1")
+                    .set("spark.dynamicAllocation.executorIdleTimeout", "60s")
+                    .set("spark.dynamicAllocation.cachedExecutorIdleTimeout", "60s")
+                    .set("spark.dynamicAllocation.sustainedSchedulerBacklogTimeout", "60s")
+                    .set("spark.dynamicAllocation.shuffleTracking.enabled", "true")
+                    
                     val driverCtx = new SparkContext(conf)
                 // Logs coming from all drivers.
                 class Log(val id: Long, val command: Boolean, val content: String) extends Serializable
@@ -122,7 +131,8 @@ object Main {
                 for (case (level, index) <- scheduling.zipWithIndex) {
 
                     println(s"Parallelizing ${level.length} targets") 
-                    val rdd = driverCtx.parallelize(level.map(_.commands), level.length * 3) // transmet all the commands of the level
+                    val rdd = driverCtx.parallelize(level.map(_.commands)) // transmet all the commands of the level
+                    
                     println(s"Number of partitions: ${rdd.getNumPartitions}")
                     val future = rdd.foreachAsync(commands => {
 

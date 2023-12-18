@@ -1,7 +1,7 @@
 # Run the matrix multiplication experiment on Grid5000 proving that spark is deployed correctly
 # Final result is stored in execution_time_result.txt
 result_file="premier_result_small.txt"
-execution_file="executionTime.txt"
+execution_file="~/executionTime.txt"
 folder=$(pwd)/$(dirname "${BASH_SOURCE[0]}")   
 echo "folder: $folder"
 PREMIER_FOLDER=$folder/../../makefiles/premier

@@ -1,6 +1,5 @@
 # Distributed makefile
-
-
+Distributed make system with Spark and NFS on grid5000
 ## Connect on grid5000 
 ```bash
 ssh login@access.grid5000.fr
@@ -25,23 +24,40 @@ ssh <site>.g5k
 
 Source: https://www.grid5000.fr/w/Getting_Started
 
+
+Clone this repository to your frontend/~ directory
+
+## Image with spark
+Image with spark is only available on site Grenoble grid5000.
+
+!!!! Le program scala will produce the time execution file in the ~/executionTime.txt  !!!!
 ## Experiments
 
-Run all experiments:
+Reserve nodes and deploy image with spark
 ```bash
-distributed-Makefile/grid5000/experiments/run-all.sh <number of nodes> 
+distributed-Makefile/grid5000/setup_make.sh <number of nodes> 
 ```
 
 Run a specific experiment:
 ```bash
 distributed-Makefile/grid5000/distributed-Makefile/grid5000/experiments run_experiment_matrix.sh  <number of iteration>
+```
 
+```bash
 distributed-Makefile/grid5000/experiments run_experiment_premier.sh  <number of iteration>
+```
 
+```bash
 distributed-Makefile/grid5000/experiments run_experiment_premier_small.sh  <number of iteration>
 ```
 
-Run NFS performance measures:
+Results are available in these files:
+- matrix_result.txt
+- premier_result.txt
+- premier_result_small.txt
+
+
+### Run NFS performance measures:
 You need to install the package `ggplot2` first in order to generate the plot.
 ```bash
 ~$ R
@@ -53,10 +69,6 @@ You need to install the package `ggplot2` first in order to generate the plot.
 And you can run the following script `~/distributed-Makefile/grid5000/measures/nfs/generate_latency_nfs_plots.sh`, `chmod u+x` this file if you don't have permission.
 
 
-## Reserve and deploy
-```bash
-distributed-Makefile/grid5000/setup_make.sh <number of nodes> 
-```
 
 ## Other scripts
 

@@ -119,7 +119,7 @@ object Main {
                 startTime = System.currentTimeMillis()
                 println("### Start Run text file ###\n")
                 // read file commandes.txt, transform it to RDD, partition it, and run each command in a partition
-                val commands = driverCtx.textFile("commandes.txt").repartition(4).foreachPartition { partition =>
+                val commands = driverCtx.textFile("commandes.txt").foreachPartition { partition =>
                     partition.foreach { command =>
                         run(command)
                     }

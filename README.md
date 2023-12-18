@@ -41,6 +41,18 @@ distributed-Makefile/grid5000/experiments run_experiment_premier.sh  <number of 
 distributed-Makefile/grid5000/experiments run_experiment_premier_small.sh  <number of iteration>
 ```
 
+Run NFS performance measures:
+You need to install the package `ggplot2` first in order to generate the plot.
+```bash
+~$ R
+> install.packages("ggplot2")
+> yes
+> yes
+> q()
+```
+And you can run the following script `~/distributed-Makefile/grid5000/measures/nfs/generate_latency_nfs_plots.sh`, `chmod u+x` this file if you don't have permission.
+
+
 ## Reserve and deploy
 ```bash
 distributed-Makefile/grid5000/setup_make.sh <number of nodes> 

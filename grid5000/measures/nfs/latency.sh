@@ -101,7 +101,7 @@ run_write_test() {
     for ((i=1; i<=NUM_TESTS; ++i)); do
         echo "Running NFS write performance test with block size $block_size... ($i/$NUM_TESTS)"
         # extract the "real" time from the result
-        result=$( { time dd if=/dev/zero of=$TESTFILE bs=$block_size count=100000 conv=fsync ; } 2>&1 )
+        result=$( { time dd if=/dev/zero of=$TESTFILE bs=$block_size oflag=direct count=100000 conv=fsync ; } 2>&1 )
         time_result=$(echo "$result" | grep real | awk '{print $2}')
         echo $time_result
         seconds=$(convert_to_seconds "$time_result")
@@ -121,7 +121,7 @@ run_write_test() {
     local variance=$(calculate_variance "${all_seconds[@]}")
     # calculate standard deviation
     local stddev=$(calculate_std_deviation "${all_seconds[@]}")
-    echo -n ";$mean;$median;$min;$max;$variance;$stddev" >> $output_csv
+    echo -n ";$mean;$median;$min;$max;$variance;$stddev;" >> $output_csv
 }
 
 # read test latency
@@ -132,7 +132,7 @@ run_read_test() {
     for ((i=1; i<=NUM_TESTS; ++i)); do
         echo "Running NFS read performance test with block size $block_size... ($i/$NUM_TESTS)"
         # extract the "real" time from the result
-        result=$( { time dd if=$TESTFILE of=/dev/null bs=$block_size count=100000 conv=fsync ; } 2>&1 )
+        result=$( { time dd if=$TESTFILE of=/dev/null bs=$block_size iflag=direct count=100000 conv=fsync ; } 2>&1 )
         time_result=$(echo "$result" | grep real | awk '{print $2}')
         echo $time_result
         seconds=$(convert_to_seconds "$time_result")
@@ -152,7 +152,7 @@ run_read_test() {
     local variance=$(calculate_variance "${all_seconds[@]}")
     # calculate standard deviation
     local stddev=$(calculate_std_deviation "${all_seconds[@]}")
-    echo - ";$mean;$median;$min;$max;$variance;$stddev" >> $output_csv
+    echo ";$mean;$median;$min;$max;$variance;$stddev" >> $output_csv
 }
 
 if [ -e "$output_csv" ]; then

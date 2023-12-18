@@ -46,7 +46,6 @@ wr_plot <- ggplot(latency_data, aes(x = block_size)) +
   geom_line(aes(y = r_lat_med, color = "Read_Med"), linetype = "solid") +
   geom_line(aes(y = r_lat_min, color = "Read_Min"), linetype = "solid") +
   geom_line(aes(y = r_lat_max, color = "Read_Max"), linetype = "solid") +
-  geom_line(aes(y = r_lat_med, color = "Read_Med"), linetype = "solid") +
 	scale_x_continuous(breaks = unique(latency_data$block_size)) +
   scale_y_continuous(breaks = c(unique(latency_data$read_mediane), unique(latency_data$write_mediane))) +
   labs(title = "Write and Read Latency vs Block Size",
@@ -59,7 +58,7 @@ wr_plot <- ggplot(latency_data, aes(x = block_size)) +
       legend.title = element_text(size = 8),
       axis.title.x = element_text(size = 8),
       axis.title.y = element_text(size = 8)) +
-  scale_color_manual(name = "Legend", values = c("Write" = "blue", "Read" = "red", "Write_Med" = "blue4", "Read_Med" = "red4","Write_Min" = "lightskyblue", "Read_Min" = "indianred1","Write_Max" = "royalblue4", "Read_Max" = "indianred4")) 
+  scale_color_manual(name = "Legend", values = c("Write" = "blue", "Read" = "red", "Write_Med" = "blue3", "Read_Med" = "red3","Write_Min" = "blue1", "Read_Min" = "red1","Write_Max" = "blue4", "Read_Max" = "red4")) 
 
 dir <- dirname(argument)
 # Save the plot as a png file

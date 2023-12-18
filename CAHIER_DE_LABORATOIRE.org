@@ -43,12 +43,11 @@
 ** Test performance NFS (latence écriture & lecture)
 
    - Descriptif : La latence du système NFS est mesuré
-   - ShaGit : 2270d2998e82801f128db5c1223c8e1e45eeee3e
-   - Date : 16/12/2023
+   - ShaGit : ec10f9cc32a253bb7540bfcf3638055b15192778
+   - Date : 17/12/2023
    - Machines utilisées : 1 nœud entier sur le cluster dahu
-   - 2 Executors 64 cœurs, 1 Go mémoire
-   - Script de génération de résultats : `grid5000/run_experiment_matrix.sh`
-   - Fichier de stockage de résultats : `results/matrix-2-workers`
+   - Script de génération de résultats : `grid5000/measures/nfs/generate_latency_nfs_plots.sh`
+   - Fichier de stockage de résultats : `grid5000/measures/nfs/results/latency.csv & grid5000/measures/nfs/nfs_latency_plot.png`
 
 
 * Fabrication des courbes de performances

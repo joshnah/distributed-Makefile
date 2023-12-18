@@ -118,16 +118,10 @@ object Main {
 
                 startTime = System.currentTimeMillis()
 
-                // iterate over scheduling and execute each target
-                for (case (level, index) <- scheduling.zipWithIndex) {
+                // read file commandes.txt, transform it to RDD and split it
+                val commands = driverCtx.textFile("commandes.txt").flatMap(_.split("\n"))
+                commands.foreach(run)
 
-                    println(s"Parallelizing ${level.length} targets") 
-                    val rdd = driverCtx.parallelize(level.flatMap(_.commands), numSlices = level.length)
-                    
-                    println(s"Number of partitions: ${rdd.getNumPartitions}")
-                    rdd.foreach(run)
-                    println(s"### Level $index finished ###\n")
-                }
 
                 // Record the end time
                 endTime = System.currentTimeMillis()

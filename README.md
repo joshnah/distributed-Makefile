@@ -1,4 +1,4 @@
-edt# Distributed makefile
+# Distributed makefile
 
 
 ## Connect on grid5000 

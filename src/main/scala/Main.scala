@@ -116,59 +116,6 @@ object Main {
 
                 startTime = System.currentTimeMillis()
 
-                // iterate over scheduling and execute each target
-                for (case (level, index) <- scheduling.zipWithIndex) {
-
-                    println(s"Parallelizing ${level.length} targets") 
-                    val rdd = driverCtx.parallelize(level.map(_.commands), level.length) // transmet all the commands of the level
-                    println(s"Number of partitions: ${rdd.getNumPartitions}")
-                    val future = rdd.foreachAsync(commands => {
-
-                        val taskCtx = TaskContext.get()
-                        val id = taskCtx.taskAttemptId()
-                        
-                        commands.foreach(command => {
-
-                            val stream = new ByteArrayOutputStream
-                            val writer = new PrintWriter(stream)
-                            val logger = ProcessLogger(writer.println, writer.println)
-
-
-                            val exitCode = Process(Seq("bash", "-c", command), runDir).!(logger)
-                            println(s"### Command $command finished ###\n")
-                            if (exitCode != 0) {
-                                writer.close()
-                                logs.add(new Log(id, true, command))
-                                logs.add(new Log(-1, false, "ERROR: command failed with exit code " + exitCode + "\n"+  stream.toString()))
-                                // sys.exit(1)
-                            }
-                            
-
-                            writer.close()
-                            // logs.add(new Log(id, false, stream.toString()))
-                            
-                        })
-                    })
-
-                    var i = 0;
-                    while (!future.isCompleted) {
-                        while (i < logs.value.size) {
-                            val log = logs.value.get(i);
-                            // If fail, stop the execution
-                            if (log.id == -1) {
-                                println(s"${log.content.strip()}")
-                                driverCtx.cancelAllJobs()
-                                driverCtx.stop()
-                                sys.exit(1)
-                            } 
-                            println(s"${log.content.strip()}")
-                            i += 1;
-                        }
-                    }
-                    logs.reset()
-                    println(s"### Level $index finished ###\n")
-                }
-
                 // Record the end time
                 endTime = System.currentTimeMillis()
 

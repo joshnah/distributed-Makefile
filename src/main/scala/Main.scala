@@ -120,7 +120,7 @@ object Main {
                 for (case (level, index) <- scheduling.zipWithIndex) {
 
                     println(s"Parallelizing ${level.length} targets") 
-                    val rdd = driverCtx.parallelize(level.map(_.commands), level.length) // transmet all the commands of the level
+                    val rdd = driverCtx.parallelize(level.map(_.commands)) // transmet all the commands of the level
                     val future = rdd.foreachAsync(commands => {
 
                         val taskCtx = TaskContext.get()

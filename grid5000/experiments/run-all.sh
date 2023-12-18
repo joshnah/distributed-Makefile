@@ -4,9 +4,9 @@ NB_ATTEMPTS=10
 for nb_nodes in "$@" 
 do
     $folder/../setup_make.sh $nb_nodes
-    $folder/run_experiment_matrix.sh NB_ATTEMPTS
-    $folder/run_experiment_premier_small.sh NB_ATTEMPTS
-    $folder/run_experiment_premier.sh NB_ATTEMPTS
+    $folder/run_experiment_matrix.sh $NB_ATTEMPTS
+    $folder/run_experiment_premier_small.sh $NB_ATTEMPTS
+    $folder/run_experiment_premier.sh $NB_ATTEMPTS
     echo "$nb_nodes" >> result
     echo matrix_result.txt" >> result
     cat matrix_result.txt >> result

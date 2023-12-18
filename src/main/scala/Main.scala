@@ -117,7 +117,7 @@ object Main {
                 val logs = driverCtx.collectionAccumulator[Log]("Logs")
 
                 startTime = System.currentTimeMillis()
-
+                println("### Start Run text file ###\n")
                 // read file commandes.txt, transform it to RDD and split it
                 val commands = driverCtx.textFile("commandes.txt").flatMap(_.split("\n"))
                 commands.foreach(run)

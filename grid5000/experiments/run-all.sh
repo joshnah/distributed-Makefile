@@ -3,7 +3,7 @@ NB_ATTEMPTS=10
 # run experiment with each number of nodes on arguments
 for nb_nodes in "$@" 
 do
-    $folder/setup_make.sh $nb_nodes
+    $folder/../setup_make.sh $nb_nodes
     $folder/run_experiment_matrix.sh NB_ATTEMPTS
     $folder/run_experiment_premier_small.sh NB_ATTEMPTS
     $folder/run_experiment_premier.sh NB_ATTEMPTS

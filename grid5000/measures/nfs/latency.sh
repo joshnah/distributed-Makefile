@@ -7,7 +7,7 @@ if [ $# -eq 0 ]; then
 fi
 
 # constants
-CSV_NAME="latency_med.csv"
+CSV_NAME="latency.csv"
 # NFS path to write to in Grid5000
 NFS_DIR="/home/$(whoami)"
 TESTFILE="$NFS_DIR/testfile"

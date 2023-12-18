@@ -121,6 +121,7 @@ object Main {
 
                     println(s"Parallelizing ${level.length} targets") 
                     val rdd = driverCtx.parallelize(level.map(_.commands), level.length) // transmet all the commands of the level
+                    println(s"Number of partitions: ${rdd.getNumPartitions}")
                     val future = rdd.foreachAsync(commands => {
 
                         val taskCtx = TaskContext.get()

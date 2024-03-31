@@ -1,5 +1,5 @@
 # Distributed makefile
-Distributed make system with Spark and NFS on grid5000
+This repository builds a distributed make command with Spark and NFS on the network of grid5000
 ## Connect on grid5000 
 ```bash
 ssh login@access.grid5000.fr

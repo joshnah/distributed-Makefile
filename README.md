@@ -1,5 +1,7 @@
 # Distributed makefile
-This repository builds a distributed make command with Spark and NFS on the network of grid5000
+This repository builds a distributed make command with Spark and NFS on the network of grid5000 (Grid'5000 is a large-scale and flexible testbed for experiment-driven research in all areas of computer science, with a focus on parallel and distributed computing including Cloud, HPC and Big Data and AI).
+
+This repo this should be cloned on your frontend of grid5000 as well as all of the necessary files for the compilation
 ## Connect on grid5000 
 ```bash
 ssh login@access.grid5000.fr
